@@ -7,6 +7,7 @@ const fileUpload = require("express-fileupload");
 const app = express();
 // request parsers
 app.use(express.json());
+
 app.use(cors());
 app.use(express.static("uploads"));
 app.use(fileUpload());
@@ -14,6 +15,11 @@ dotenv.config();
 
 app.get("/", (req, res) => {
   res.send("i am working");
+});
+
+//middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
 });
 
 // // database connection
@@ -31,9 +37,11 @@ client.connect((err) => {
     .db("apartmentdb")
     .collection("bookingRequest");
 
-  const adminCollection = client.db("apartmentdb").collection("apartmentInfo");
+  const apartmentCollection = client
+    .db("apartmentdb")
+    .collection("apartmentInfo");
 
-  const bookingCollection = client.db("apartmentdb").collection("admin");
+  const adminCollection = client.db("apartmentdb").collection("admin");
 
   app.post("/booking", (req, res) => {
     const bookingInfo = req.body;
