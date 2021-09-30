@@ -31,9 +31,9 @@ client.connect((err) => {
     .db("apartmentdb")
     .collection("bookingRequest");
 
-  const apartmentCollection = client
-    .db("apartmentdb")
-    .collection("apartmentInfo");
+  const adminCollection = client.db("apartmentdb").collection("apartmentInfo");
+
+  const bookingCollection = client.db("apartmentdb").collection("admin");
 
   app.post("/booking", (req, res) => {
     const bookingInfo = req.body;
@@ -109,6 +109,20 @@ client.connect((err) => {
         }
         res.status(500).send("something is wrong while uploading");
       });
+  });
+
+  app.post("/admin", (req, res) => {
+    const admin = req.body;
+    const name = admin.name;
+    const email = admin.email;
+
+    adminCollection.insertOne(name, email).then((result) => {
+      if (result > 0) {
+        res.status(200).send(result);
+      } else {
+        res.status(500).send("Something is wrong");
+      }
+    });
   });
 
   console.log("database connected");
